@@ -1,6 +1,28 @@
 {
   "name": "json-form-mat",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "A library for generating dynamic forms based on JSON configuration in Angular",
+  "author": {
+    "name": "A Anand",
+    "email": "anandarul47@gmail.com",
+    "url": "https://yourwebsite.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soup-stix/JSONForm"
+  },
+  "bugs": {
+    "url": "https://github.com/soup-stix/JSONForm/issues"
+  },
+  "homepage": "https://github.com/soup-stix/JSONForm#readme",
+  "keywords": [
+    "angular",
+    "forms",
+    "json",
+    "dynamic",
+    "components"
+  ],
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "^15.2.0",
     "@angular/core": "^15.2.0",
