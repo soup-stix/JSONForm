@@ -1,105 +1,71 @@
-# JsonForm
 
-Dynamic Forms Library.
+# Dynamic Forms Library.
 
- 
+## Installation & Setup.
 
-Installation & Setup.
+1. Navigate to the angular workspace.
 
-Navigate to the angular workspace.
+2. use the following commands to install the packages 
+<code>npm install json-form-html</code> or <code>npm install json-form-mat</code> 
 
-npm install DynamicForms.tar.gz , npm install.
+3. In your <code>app.module.ts</code> file, 
+use <code> import { JsonFormHtmlModule } from  'json-form-html';</code>  or 
+<code> import { JsonFormMatModule } from  'json-form-mat';</code> and 
+add it to imports as well.
 
-In the src/app/app.module.ts file, import { DynamicFormsModule } from ‘DynamicForms’ and it to imports [].
 
-Using the library.
+
+
+
+## Using the library.
 
 You can now use the library to generate forms from an input JSON file located anywhere. To create a form, navigate to the component which needs the form and continue with the following steps.
 
- 
+In the component.ts file,
 
-In the component.ts file,  
-
- import { HttpClient } from "@angular/common/http";
-
-   import { DynamicFormsComponent, DynamicFormsHTMLComponent} from ‘DynamicForms’;
+<code>import { HttpClient } from  '@angular/common/http'; <br>
+import { JsonFormData } from  "json-form-html"; </code>
+or
+<code>import { JsonFormData } from  "json-form-mat";</code>
 
 Add http: HttpClient into the constructor.
 
-constructor(private http: HttpClient) {}
+<code>constructor(private http: HttpClient) {}</code>
 
-Create a variable called Validators : any = {} ; . This is to hold your custom validators for the various form fields. Refer to the section on Validators for more.
+Create a variable called <code>Validators : any = {} ;</code> . This is to hold your custom validators for the various form fields. Refer to the section on Validators for more.
 
-Create a variable called inputJSON of type any which is going to hold our raw JSON input. You can populate the JSON directly or get it from a file using http request or follow any method.   
+Create a variable called inputJSON of type any which is going to hold our raw JSON input. You can populate the JSON directly or get it from a file using http request or follow any method.
 
-NOTE - If we wish to use the http get method, following steps should be followed.    
+NOTE - If we wish to use the http get method, following steps should be followed.
 
-Within our ngOnInit() function, paste the following snippet. Make sure to change relativePathToJSONFile to a valid path. E.g., ‘/assets/jsonfilename.json’
+Within our <code>ngOnInit()</code> function, paste the following snippet. Make sure to change relativePathToJSONFile to a valid path. E.g., <code>‘/assets/jsonfilename.json’</code>
 
-  this.http
-
-      .get('relativePathToJSONFile’)
-
-      .subscribe((inputJSON: any) => {
-
-        this.inputJSON = inputJSON;
-
-      });  
-
- 
-
- 
-
- 
-
+<code>
+ this.http.get('relativePathToJSONFile’)<br>.subscribe((inputJSON: any) => {<br>this.inputJSON = inputJSON;<br>});</code><br><br>
 In your component.html file, simply call the DynamicForms component as below with the appropriate attributes.
 
-<app-dynamic-forms
 
-[jsonFormData]="inputJSON"  
+```<json-form-html  (allEvents)="eventDetector($event)"  [customValidators]="Validators"  [jsonFormData]="formData"></lib-json-form-html>```
 
-(onEvent)="eventDetector($event)" [customValidators]="Validators">
+or
 
-</app-dynamic-forms>
+```<json-form-mat  (allEvents)="eventDetector($event)"  [customValidators]="Validators"  [jsonFormData]="formData"></lib-json-form-mat>```
 
- 
+NOTE –The appropriate functions which have been called within the “” should be defined in your component.ts file. Please refer to the section on DV Specific Solutions for DV migration.
 
-(or)
-
-If you prefer to use HTML elements instead of Angular Material elements,
-
-<app-dynamic-forms-html
-
-[jsonFormData]="inputJSON"  
-
-(onEvent)="eventDetector($event)" [customValidators]="Validators">
-
-</app-dynamic-forms-html>
-
- 
-
-NOTE –The appropriate functions which have been called within the “” should be defined in your component.ts file. Please refer to the section on DV Specific Solutions for DV migration.  
-
-If you’re using material components, head to the section on Angular Material head back here.
-
-Once you have your JSON structure and Validators in place, your form should be appropriately rendered with the angular material components.  
-
- 
+Once you have your JSON structure and Validators in place, your form should be appropriately rendered with the angular material components.
 
 Let’s have a look at how to write the JSON input.
 
- 
-
-Input JSON.  
+Input JSON.
 
 The structure of the JSON is the core of the dynamic forms library.
+
 This is how the JSON file should look.
-
- 
-
+```
 {
 
-controls : [
+controls : \[
 
 { formElement/SubGroup/ExpansionBox/button},
 
@@ -109,45 +75,38 @@ controls : [
 
 …
 
-]
+\]
 
 }
-
- 
+```
 
 For a full input/output demonstration, see here.
 
-Each object inside controls can be a form element, a button, a subgroup, or elements inside an expansion box(which are subgrouped as well). This is determined by “formName” key which is present in each object.  
+Each object inside controls can be a form element, a button, a subgroup, or elements inside an expansion box(which are subgrouped as well). This is determined by “formName” key which is present in each object.
 
-A form element is one of the following HTML5 form input types – 'text', 'password', 'email', 'number',  'search', 'tel', 'url', 'time', ‘date’ , ‘checkbox’, ‘radio’ , ‘dropdown’ (select/multiselect), ‘file’ and ‘textarea’.  
+A form element is one of the following HTML5 form input types – 'text', 'password', 'email', 'number',  'search', 'tel', 'url', 'time', ‘date’ , ‘checkbox’, ‘radio’ , ‘dropdown’ (select/multiselect), ‘file’ and ‘textarea’.
 
- 
+A subgroup can contain a collection of form elements but not another subgroup or expansion box. An expansion box is a way of wrapping subgroups with the mat-expansion-box element.
 
-A subgroup can contain a collection of form elements but not another subgroup or expansion box. An expansion box is a way of wrapping subgroups with the mat-expansion-box element.  
+Buttons and their bindings are discussed here.
 
-Buttons and their bindings are discussed here.  
+## Form Element Guide
 
- 
+Form Elements *'text', 'password', 'email', 'number',  'search', 'tel', 'url' and 'time'* can be specified as per the below format.
 
-Form Element Guide  
-
- 
-
-Form Elements 'text', 'password', 'email', 'number',  'search', 'tel', 'url' and 'time' can be specified as per the below format.  
-
- 
-
+#### 'text', 'password', 'email', 'number',  'search', 'tel', 'url' and 'time'
+```
 {
 
-      "formName": "formElement",  
+      "formName": "formElement",
 
-      "ctrl_name": "text", //creates a form control of the given name  
+      "ctrl_name": "text", //creates a form control of the given name
 
       "label": "text test", // sets the label of the element
 
-      "value": "texttest", //  sets the value of the element
+      "value": "texttest", // sets the value of the element
 
-      "type": "text", //Creates a field of given type.  
+      "type": "text", //Creates a field of given type.
 
       "class": "text", //sets the overall css class of the div outside element
 
@@ -159,7 +118,7 @@ Form Elements 'text', 'password', 'email', 'number',  'search', 'tel', 'url' a
 
         "id": "text", //sets the id of the element
 
-        "name": "text",  //sets the name property of the element
+        "name": "text", //sets the name property of the element
 
         "class": "text", //css class of the element.
 
@@ -169,7 +128,7 @@ Form Elements 'text', 'password', 'email', 'number',  'search', 'tel', 'url' a
 
         "minlength": "12", //sets minlength property of the element.
 
-        "style": ""   
+        "style": ""
 
       },
 
@@ -177,22 +136,20 @@ Form Elements 'text', 'password', 'email', 'number',  'search', 'tel', 'url' a
 
         "custom": "permIDValidator"
 
-      } //covered in the section on validators.  
+      } //covered in the section on validators.
 
     }
+```
+Any option can be omitted but it must be passed as an empty object if all options are omitted. Same applies to validators.
 
- 
+NOTE - The type “file” is also supported. The parent component has to handle file logic as only a path to the file will be specified.
 
- Any option can be omitted but it must be passed as an empty object if all options are omitted. Same applies to validators.   
 
-NOTE - The type “file” is also supported. The parent component has to handle file logic as only a path to the file will be specified.  
 
- 
 
-‘checkbox’
 
- 
-
+#### ‘checkbox’
+```
 {
 
       "formName": "formElement",
@@ -222,11 +179,13 @@ NOTE - The type “file” is also supported. The parent component has to handle
       "validators": {}
 
 },
+```
 
- 
 
-‘radio’
 
+
+#### ‘radio’
+```
 {
 
       "formName": "formElement",
@@ -237,7 +196,7 @@ NOTE - The type “file” is also supported. The parent component has to handle
 
       "label": "radio test",
 
-      "values": ["a", "b"],
+      "values": \["a", "b"\],
 
       "options": {
 
@@ -250,11 +209,13 @@ NOTE - The type “file” is also supported. The parent component has to handle
       "validators": {}
 
     },
+```
 
- 
 
-‘datepicker’
 
+
+#### ‘datepicker’
+```
 {
 
       "formName": "formElement",
@@ -276,11 +237,14 @@ NOTE - The type “file” is also supported. The parent component has to handle
       }
 
     },
+```
 
- 
 
-‘select’/’multiselect’/’dropdown’
 
+
+
+#### ‘select’/’multiselect’/’dropdown’
+```
 {
 
       "formName": "formElement",
@@ -289,7 +253,7 @@ NOTE - The type “file” is also supported. The parent component has to handle
 
       "type": "dropdown",
 
-      "values": [{ "key": "a" }, { "key": "b" }],
+      "values": \[{ "key": "a" }, { "key": "b" }\],
 
       "validators": {},
 
@@ -304,11 +268,14 @@ NOTE - The type “file” is also supported. The parent component has to handle
       }
 
     },
+```
 
- 
 
-‘textarea’
 
+
+
+#### ‘textarea’
+```
 {
 
       "formName": "formElement",
@@ -340,193 +307,94 @@ NOTE - The type “file” is also supported. The parent component has to handle
       }
 
     }
+```
 
- 
 
-Fields
 
-Field Name
 
-Description
+### Fields
+| Field Name | Description | Supported By |
+|----------|----------|----------|
+| checked    | Checkbox is initially true if marked.   | Checkbox   |
+| id   | ID property of the html element if given inside options, else id property of the div wrapping the element.   | All   |
+| class | Specifies one or more class names for an element. Refers to the elements class if given inside options, else refers to the div wrapping the element. | All |
+| style | Specifies an inline style for an element. | All |
+| title | A tooltip text for the element. | All |
+| max | Specify a maximum value. In case of a date, specify as ‘YYYY-MM-DD’. Use the value ‘today’ to set the current date as maximum. | Date, Numerical |
+| min | Specify a minimum value. In case of a date, specify as ‘YYYY-MM-DD’. Use the value ‘today’ to set the current date as minimum. | Date, Numerical |
+| multiple | Allows a dropdown/select menu to be a multi-select. | Dropdown |
+| placeholder | Specifies a short hint that describes the expected value of the input field. | All input fields |
+| value | Default value to be sent to the server on submitting the form. | All |
+| values | Defines the list of options that should be part of a radio-group or a multi-select. | Radio/Select/Multi-select |
+| appearance | Defines the appearance of the angular material element. Can be outline/fill. | Refer to Angular Material documentation. |
+| label | Label given to the form field. | All |
+| autocomplete | Autocomplete allows the browser to predict the value. When a user starts to type in a field, the browser should display options to fill in the field, based on earlier typed values. Can be “on” or “off”. | text, search, url, tel, email, password and date |
+| autofocus | Determines whether the element should be focused on page load.| All |
+| accept | Specifies a filter for what file types the user can pick from the file input dialog box. | Files. |
 
-Supported By
 
-checked
 
-Checkbox is initially true if marked.
 
-Checkbox
+### Expansion Box
 
-id  
+Angular material-expansion-box.
 
-ID property of the html element if given inside options, else id property of the div wrapping the element.
-
-All.
-
-class
-
-Specifies one or more class names for an element. Refers to the elements class if given inside options, else refers to the div wrapping the element
-
-All.
-
-style  
-
-Specifies an inline style for an element.  
-
-All.
-
-title
-
-A tooltip text for the element.
-
-All.  
-
-max
-
-Specify a maximum value. In case of a date, specify as ‘YYYY-MM-DD’. Use the value ‘today’ to set the current date as maximum.  
-
-Date, Numerical.
-
-min  
-
-Specify a minimum value. In case of a date, specify as ‘YYYY-MM-DD’. Use the value ‘today’ to set the current date as minimum.
-
-Date, Numerical.
-
- 
-
-multiple
-
-Allows a dropdown/select menu to be a multi-select.  
-
-Dropdown.
-
-placeholder
-
-Specifies a short hint that describes the expected value of the input field.
-
-All input fields.  
-
-value
-
-Default value to be sent to the server on submitting the form
-
-All.
-
-values  
-
-Defines the list of options that should be part of a radio-group or a multi-select
-
-Radio/Select/Multi-select.
-
-appearance
-
-Defines the appearance of the angular material element. Can be outline/fill.
-
-Refer to Angular Material documentation.
-
-label  
-
-Label given to the form field.  
-
-All.
-
-autocomplete
-
-Autocomplete allows the browser to predict the value. When a user starts to type in a field, the browser should display options to fill in the field, based on earlier typed values. Can be “on” or “off”.  
-
-text, search, url, tel, email, password and date.  
-
-autofocus
-
-Determines whether the element should be focused on page load.
-
-All.  
-
-accept
-
-Specifies a filter for what file types the user can pick from the file input dialog box.
-
-Files.
-
- 
-
- 
-
-Expansion Box
-
-Angular material-expansion-box.  
-
-Specified by setting the “formName” attribute to “expansionPanel” and the “type” attribute to "expansion”.  
-
- 
+Specified by setting the *“formName”* attribute to *“expansionPanel”* and the *“type”* attribute to *"expansion”*.
 
 Sample Code.
 
- 
-
-By default, all the elements within an expansion box are taken to be a subgroup. Let’s take an example of an expansion box that corresponds to “Address”. The Address element is composed of “Door Number”, “Street”, “City”, “Pin code”, “State” and “Country”. If specified with an expansion box, it will appear as follows in the submitted form.  
-
- 
-
+By default, all the elements within an expansion box are taken to be a subgroup. Let’s take an example of an expansion box that corresponds to “Address”. The Address element is composed of “Door Number”, “Street”, “City”, “Pin code”, “State” and “Country”. If specified with an expansion box, it will appear as follows in the submitted form.
+```
 Address : {
 
-Door Number:     “”,
+Door Number: “”,
 
-Street   	 :    “”,
+Street : “”,
 
-City    	 :    “”,
+City : “”,
 
-Pin Code    :     “ “,
+Pin Code : “ “,
 
-State   	 :     “”,
+State : “”,
 
-Country    :     “”
+Country : “”
 
-}   
+}
+```
+**Collapsed -**
 
- 
-
-Collapsed -
-
- 
-
- 
-
- 
-
-Expanded –
+**Expanded –**
 
 A screenshot of a computer
 
 Description automatically generated
 
- 
 
-Subgroups
 
-No specific layout. Like expansion box but without the material-expansion-box wrapper. Group any set of form controls together. Let’s take the example of a “Name” subgroup.  
+
+
+### Subgroups
+
+No specific layout. Like expansion box but without the material-expansion-box wrapper. Group any set of form controls together. Let’s take the example of a “Name” subgroup.
 
 “Name” should contain “First Name” and “Last Name”.
-
- 
-
+```
 Name : {
 
-First Name:     “”,
+First Name: “”,
 
-Last Name:     “”
+Last Name: “”
 
 }
+```
 
-See code.  
 
- 
 
-Buttons
 
-Specified by giving the “formName” as “button”, different types of buttons and links are supported. Note that this is only supported in the material component.
+### Buttons
 
+Specified by giving the “formName” as “button”, different types of buttons and links are supported. Note that this is only supported in the **material component**.
+```
 buttonStroked
 
 buttonFlat
@@ -542,7 +410,9 @@ linkRaised
 linkStroked
 
 linkFlat
-
+```
+**Sample JSON:** 
+```
 {
 
       "formName": "button",
@@ -559,9 +429,7 @@ linkFlat
 
         "color": "primary",
 
-        "onClick": "test()",
-
-        "link": "https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8",
+        "link": "<https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8>",
 
         "operation": "test()",
 
@@ -574,64 +442,70 @@ linkFlat
       }
 
     },
+```
 
- 
+For links, you can specify the link. For buttons, specifying link will have no effect.
 
-disableRipple and disabled are described in angular material documentation. The operation/onClick attribute allow event handling.  
 
- 
 
-For links, you can specify the link. For buttons, specifying link will have no effect.  
 
- 
 
-Event Handling
+### Event Handling
 
-All the below events are emitted to the user’s component. The user gets an event object and can write their own function to execute when the event occurs.  This works because in our component’s html, while calling the dynamic form component, we have an attribute called “onEvent” which is mapped to a function called eventDetector in our component’s typescript file. You can define the function with any name but don’t forget to update that name while calling the form.
-
- 
-
+All the below events are emitted to the user’s component. The user gets an event object and can write their own function to execute when the event occurs. This works because in our component’s html, while calling the dynamic form component, we have an attribute called “onEvent” which is mapped to a function called eventDetector in our component’s typescript file. You can define the function with any name but don’t forget to update that name while calling the form.
+```
 (click),
-(dblclick),  
+
+(dblclick),
+
 (blur)
-(focus)  
+
+(focus)
+
 (scroll)
+
 (cut)
+
 (copy) (paste)
+
 (keyup)
+
 (keypress)
+
 (keydown)
+
 (mouseup),
+
 (mousedown),
+
 (mouseenter),
+
 (drag),
+
 (drop),
+
 (dragover)
 
 (submit)
-
- 
-
+```
 In the component.ts file, you can handle the event as follows.
-
+```
  eventDetector(event:any){
 
     //do something
 
   }
-
+```
 To receive the events of a specific form element, add the attribute “operation” with any value to the “options” attribute of the element.
 
-To monitor form changes, please use the “changes” attribute under “options” as specified here. (Add working form changes example code snippet).   
+To monitor form changes, please use the “changes” attribute under “options” as specified here. (Add working form changes example code snippet).
 
- 
+### Interaction of form fields
 
-Interaction of form fields
+We can show or hide a form field based on the value of another formfield.
 
-We can show or hide a form field based on the value of another formfield.  
-
-Let’s call the form field that we want to hide as child and the formfield based on whose value we want to hide as parent. Now, we need to add an attribute called “master” with the value of the parent controls control name in order to hide or show the child.  
-
+Let’s call the form field that we want to hide as child and the formfield based on whose value we want to hide as parent. Now, we need to add an attribute called “master” with the value of the parent controls control name in order to hide or show the child.
+```
 {
 
           "formName": "formElement",
@@ -667,11 +541,9 @@ Let’s call the form field that we want to hide as child and the formfield base
           "validators": {}
 
         }
-
- 
-
-To enable or disable form fields, we need to use the dynamic attribute. Enter the list of controls that you’d like to disable within an attribute called “dynamic”.  
-
+```
+To enable or disable form fields, we need to use the dynamic attribute. Enter the list of controls that you’d like to disable within an attribute called “dynamic”.
+```
 {
 
   "formName": "formElement",
@@ -694,32 +566,33 @@ To enable or disable form fields, we need to use the dynamic attribute. Enter th
 
       "name": "auditInfo",
 
-      "dynamic": [
+      "dynamic": \[
 
           {"ctrl":"auditInfoDate"}
 
           {"ctrl":"auditInfoTime"}
 
-      ],
+      \],
 
       "changes": true,
 
   },
 
-  "validators": []
+  "validators": \[\]
 
 }
+```
+The *formfields* with control name *auditInfoDate* and *auditInfoTime* are controlled by *auditInfo*’s value. Make sure to give the attribute changes as specified above.
 
- 
 
-The formfields with control name auditInfoDate and auditInfoTime are controlled by auditInfo’s value. Make sure to give the attribute changes as specified above.
 
-Validators
+
+### Validators
 
 You can choose to write your own validator functions, or you can use some of Angular's built-in validators. All angular built-in validators are supported except for compose and composeAsync. To implement these validators, you can choose to use custom validators. For a more detailed overview please visit the official angular documentation.
 
-Form.json
-
+**Form.json**
+```
 "validators": {
 
           "custom": "permIDValidator",
@@ -741,21 +614,21 @@ Form.json
           "nullValidator" : "nullValidator"
 
 }
+```
+NOTE – Add custom validators with the key *“custom”:”customValidatorName”*. Some validators like *“max”* and *“min”* are only applicable for numerical fields. Please use as appropriate. *“required”* adds the validator *“requiredTrue”* to the form element. Some validators don’t need a value and therefore, in the value string, you can pass a dummy string. Also note that in case we are defining custom validators for functionality that is already fulfilled by an in-built validator, we should use only one of them.
 
- 
 
-NOTE – Add custom validators with the key “custom”:”customValidatorName”. Some validators like “max” and “min” are only applicable for numerical fields. Please use as appropriate. “required” adds the validator “requiredTrue” to the form element. Some validators don’t need a value and therefore, in the value string, you can pass a dummy string. Also note that incase we are defining custom validators for functionality that is already fulfilled by an in-built validator, we should use only one of them.  
 
-Custom Validators
 
-Write your custom validators according to the specifications in the angular documentation. Import the validators you are using inside your component. In the JSON file, use the key “custom” to denote that you are using a custom validator.  
 
+### Custom Validators
+
+Write your custom validators according to the specifications in the angular documentation. Import the validators you are using inside your component. In the JSON file, use the key *“custom”* to denote that you are using a custom validator.
+```
 import { customValidator1, customValidator2, customValidator3 } from './shared/validators/validator';
-
- 
-
-Inside your component.ts file, add a dictionary called Validators like so.  
-
+```
+Inside your component.ts file, add a dictionary called Validators like so.
+```
 public Validators = {
 
     'customValidator1' : customValidator1,
@@ -765,14 +638,12 @@ public Validators = {
     'customValidator3' : customValidator3
 
   }
-
- 
-
-Sample Custom Validator for validating zipCode
-
+```
+**Sample Custom Validator for validating zipCode**
+```
 export const zipCodeValidator = (control: AbstractControl): {
 
-    [key: string]: any
+    \[key: string\]: any
 
 } => {
 
@@ -807,80 +678,80 @@ export const zipCodeValidator = (control: AbstractControl): {
     return null;
 
 };
+```
+While calling the dynamic form component,
 
- 
+**component.html**
+```
+\[customValidators\]="Validators"
+```
+should be passed. If no custom validators are used, the Validators dictionary should still be passed even if it is empty.
 
-While calling the dynamic form component,  
 
-component.html
 
-[customValidators]="Validators"
 
- 
 
-should be passed. If no custom validators are used, the Validators dictionary should still be passed even if it is empty.  
+### CSS Styling/Material Theming
 
-CSS Styling/Material Theming
+Add the appropriate CSS class to the “class” attribute of the required element. You can then define the class style in your *styles.scss or .component.scss* file. This should ensure that the correct style is applied. Specifying a class inside the “options” section will allow you to alter the style of the element whereas specifying the class outside the “options” section will allow you to apply a style class to the div which is wrapping the material element.
 
-Add the appropriate CSS class to the “class” attribute of the required element. You can then define the class style in your styles.scss or *.component.scss file. This should ensure that the correct style is applied. Specifying a class inside the “options” section will allow you to alter the style of the element whereas specifying the class outside the “options” section will allow you to apply a style class to the div which is wrapping the material element.
-
-You can also modify the “appearance” attribute of the angular material library wherever applicable. This is primarily set to two values. Either “outline” or “fill”. For more information, refer to the Angular Material documentation. To set the height of the form form-field, adjust the font-size.  
+You can also modify the *“appearance”* attribute of the angular material library wherever applicable. This is primarily set to two values. Either *“outline”* or *“fill”*. For more information, refer to the Angular Material documentation. To set the height of the form form-field, adjust the font-size.
 
 Add the necessary imports for the Material components which are being used in the form to App.module.ts without fail.
-
+```
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MatButtonModule } from '@angular/material/button';
-
+`````
 …
-
- 
 
 Material theme can be handled by the parent. This can be set from custom theme and should be done according to Angular material documentation.
 
-https://material.angular.io/guide/theming
-
- 
+<https://material.angular.io/guide/theming>
 
 Add your styles.scss file to the angular.json file.
-
-styles : [
+```
+styles : \[
 
 styles.scss
 
-]
+\]
+````
 
-Bootstrap
 
-After installing bootstrap, simply add the appropriate classes to the “class” attribute in the JSON file for each element.  
 
-Follow this guide to add bootstrap to your project.  
 
-https://www.freecodecamp.org/news/how-to-add-bootstrap-css-framework-to-an-angular-application/
+ ### Bootstrap
 
-If a bootstrap class has to be overridden, the user implemented style should contain the !important annotation.  
+After installing bootstrap, simply add the appropriate classes to the “class” attribute in the JSON file for each element.
 
-Sample bootstrap –  
+Follow this guide to add bootstrap to your project.
 
+<https://www.freecodecamp.org/news/how-to-add-bootstrap-css-framework-to-an-angular-application/>
+
+If a bootstrap class has to be overridden, the user implemented style should contain the !important annotation.
+
+**Sample bootstrap** –
+```
 "class": "col-xs-9 col-sm-5 col-md-4 col-lg-4",
 
 Versioning & Dependencies
 
-Angular   	 ^14.2.0
+Angular ^14.2.0
 
-Angular Material    ^14.2.0
+Angular Material ^14.2.0
+```
 
-For Node.js version, please see here.
 
-Code Snippets
 
-Demo Form  
 
-JSON File HTML
+## Demo Form
 
+### JSON File HTML
+```
 {
 
-    "controls": [
+    "controls": \[
 
       {
 
@@ -926,8 +797,6 @@ JSON File HTML
 
           }
 
-       
-
       },
 
       {
@@ -938,7 +807,7 @@ JSON File HTML
 
         "label": "Name",
 
-        "subForm": [
+        "subForm": \[
 
           {
 
@@ -1004,7 +873,7 @@ JSON File HTML
 
           }
 
-        ]
+        \]
 
       },
 
@@ -1026,7 +895,7 @@ JSON File HTML
 
           "onClick": "test()",
 
-          "link": "https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8",
+          "link": "<https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8>",
 
           "operation": "test()",
 
@@ -1064,27 +933,17 @@ JSON File HTML
 
       }
 
-    ]
+    \]
 
   }
+```
+**Output**
 
-   
-
- 
-
- 
-
-Output  
-
- 
-
- 
-
-JSON file Angular Material.
-
+###  JSON file Angular Material.
+```
 {
 
-  "controls": [
+  "controls": \[
 
     {
 
@@ -1130,11 +989,7 @@ JSON file Angular Material.
 
         }
 
-     
-
     },
-
-     
 
     {
 
@@ -1148,7 +1003,7 @@ JSON file Angular Material.
 
       "label": "Expansion Box",
 
-      "subForm": [
+      "subForm": \[
 
         {
 
@@ -1202,7 +1057,7 @@ JSON file Angular Material.
 
         }
 
-      ]
+      \]
 
     },
 
@@ -1214,7 +1069,7 @@ JSON file Angular Material.
 
       "label": "Name",
 
-      "subForm": [
+      "subForm": \[
 
         {
 
@@ -1280,7 +1135,7 @@ JSON file Angular Material.
 
         }
 
-      ]
+      \]
 
     },
 
@@ -1302,7 +1157,7 @@ JSON file Angular Material.
 
         "onClick": "test()",
 
-        "link": "https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8",
+        "link": "<https://www.google.com/search?q=call+event+emiter+on+button+click+with+the+event+data&oq=call+event+emiter+on+button+click+with+the+event+data&aqs=edge..69i57j0i546i649j0i546.10444j0j1&sourceid=chrome&ie=UTF-8>",
 
         "operation": "test()",
 
@@ -1340,22 +1195,22 @@ JSON file Angular Material.
 
     }
 
-  ]
+  \]
 
 }
-
- 
-
-Output
+```
+**Output**
 
 A white background with black text
 
 Description automatically generated
 
-Address Expansion Box
 
- 
 
+
+
+### Address Expansion Box
+```
 {
 
       "formName": "expansionPanel",
@@ -1368,7 +1223,7 @@ Address Expansion Box
 
       "label": "Address",
 
-      "subForm": [
+      "subForm": \[
 
         {
 
@@ -1526,13 +1381,11 @@ Address Expansion Box
 
         }
 
-      ]
+      \]
 
     }
 
- 
-
-Name Subgroup
+//Name Subgroup
 
     {
 
@@ -1542,7 +1395,7 @@ Name Subgroup
 
       "label": "Name",
 
-      "subForm": [
+      "subForm": \[
 
         {
 
@@ -1596,38 +1449,7 @@ Name Subgroup
 
         }
 
-      ]
+      \]
 
     }
-
-
-
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.2.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
-#   J S O N F o r m 
- 
- 
+```
